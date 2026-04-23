@@ -45,12 +45,12 @@ jobs:
 
       - name: Build Docker image (local test)
         run: |
-          docker build -t $IMAGE_NAME:${{ github.sha }} .
-          docker build -t $IMAGE_NAME:latest .
+          docker build -t formation-app:${{ github.sha }} .
+          docker build -t formation-app:latest .
 
       - name: Test container
         run: |
-          docker run -d --name app-test -p 3000:3000 $IMAGE_NAME:latest
+          docker run -d --name app-test -p 3000:3000 formation-app:latest
           sleep 5
           curl -f http://localhost:3000/ || exit 1
           docker stop app-test
@@ -85,8 +85,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/formation-app:latest
-            ghcr.io/${{ github.repository_owner }}/formation-app:${{ github.sha }}
+            ghcr.io/chorokelmo/formation-app:latest
+            ghcr.io/chorokelmo/formation-app:${{ github.sha }}
 
   # ─────────────────────────────────────────────
   # 3. DEPLOY (SIMULATION)
@@ -106,7 +106,7 @@ jobs:
           echo "===================================="
           echo " 🚀 DEPLOYMENT SUCCESS (SIMULATION)"
           echo "===================================="
-          echo "Image: ghcr.io/${{ github.repository_owner }}/formation-app:latest"
+          echo "Image: ghcr.io/chorokelmo/formation-app:latest"
           echo "Commit: ${{ github.sha }}"
           echo "Branch: ${{ github.ref_name }}"
           echo "Date: $(date)"
