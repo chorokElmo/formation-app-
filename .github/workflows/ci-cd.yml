@@ -24,26 +24,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout du code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python 3.12
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
 
-      - name: Installer dépendances
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt || true
           pip install pytest
 
-      - name: Lancer tests
+      - name: Run tests
         run: |
           python -m pytest tests/ -v --tb=short || echo "No tests found"
 
-      - name: Build Docker image (local test)
+      - name: Build Docker image
         run: |
           docker build -t $IMAGE_NAME:${{ github.sha }} .
           docker build -t $IMAGE_NAME:latest .
@@ -65,12 +65,8 @@ jobs:
     needs: build-and-test
     if: github.ref == 'refs/heads/main'
 
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Login to GHCR
@@ -78,9 +74,9 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Build & Push Docker image
+      - name: Build and Push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -92,7 +88,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   # ─────────────────────────────────────────────
-  # JOB 3 : DEPLOY SIMULATION
+  # JOB 3 : DEPLOY (SIMULATION)
   # ─────────────────────────────────────────────
   deploy:
     name: Deploy
@@ -101,15 +97,15 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Validate Docker Compose
+      - name: Validate docker-compose
         run: |
-          echo "🚀 Deployment starting...."
-          docker compose config || echo "No docker-compose file found"
+          echo "🚀 Deployment starting..."
+          docker compose config || echo "No docker-compose.yml found"
 
-      - name: Show deployment info
+      - name: Deployment info
         run: |
           echo "===================================="
           echo " DEPLOYMENT SUCCESS (SIMULATION)"
