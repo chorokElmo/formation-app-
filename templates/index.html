@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FormationHub — Catalogue de Formations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #260d3b;
+      --paper:    #f5f0fa;
+      --accent:   #8a2be2;
+      --accent-soft: rgba(138,43,226,.10);
+      --accent-border: rgba(138,43,226,.25);
+      --muted:    #7a6890;
+      --muted-light: #b09ec8;
+      --card-bg:  #fefcff;
+      --border:   #e0d5ed;
+      --shadow:   0 2px 20px rgba(38,13,59,.07);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4rem;
+      height: 68px;
+      background: rgba(245,240,250,0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 2.5rem;
+      list-style: none; margin: 0; padding: 0;
+    }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 500;
+      color: var(--muted); text-decoration: none;
+      transition: color .2s; white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--ink); }
+
+    .nav-cta {
+      background: var(--ink) !important; color: var(--paper) !important;
+      padding: .5rem 1.4rem !important; border-radius: 100px;
+      font-weight: 600 !important; letter-spacing: -0.01em;
+      transition: background .2s, transform .2s !important;
+    }
+    .nav-cta:hover { background: var(--accent) !important; color: #fff !important; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      padding: 0 4rem; gap: 5rem;
+      align-items: center; position: relative; overflow: hidden;
+    }
+
+    .hero::before {
+      content: ''; position: absolute; top: -15%; right: -8%;
+      width: 650px; height: 650px;
+      background: radial-gradient(ellipse at center, rgba(138,43,226,.13) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -20%; left: -5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(138,43,226,.06) 0%, transparent 68%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative; z-index: 1; padding-top: 68px;
+      animation: contentIn .8s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes contentIn {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-label {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: .13em;
+      text-transform: uppercase; color: var(--accent);
+      background: var(--accent-soft); border: 1px solid var(--accent-border);
+      padding: .4rem 1rem; border-radius: 100px; margin-bottom: 1.75rem;
+    }
+
+    .hero-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 800; font-size: clamp(3.2rem, 4.8vw, 5rem);
+      line-height: .98; letter-spacing: -0.05em;
+      color: var(--ink); margin-bottom: 1.75rem;
+    }
+    .hero-title em { font-style: normal; color: var(--accent); display: block; }
+
+    .hero-desc {
+      font-size: 1rem; line-height: 1.75; color: var(--muted);
+      max-width: 430px; margin-bottom: 2.5rem; font-weight: 400;
+    }
+
+    .hero-actions { display: flex; gap: .875rem; align-items: center; flex-wrap: wrap; }
+
+    .btn-primary {
+      background: var(--ink); color: var(--paper);
+      padding: .875rem 2rem; border-radius: 100px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 600; text-decoration: none;
+      display: inline-flex; align-items: center; gap: .45rem;
+      letter-spacing: -0.01em;
+      transition: background .25s, transform .2s, box-shadow .25s;
+    }
+    .btn-primary:hover { background: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(138,43,226,.3); }
+
+    .btn-ghost {
+      color: var(--ink); padding: .875rem 2rem; border-radius: 100px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.88rem; font-weight: 600; text-decoration: none;
+      border: 1.5px solid var(--border); letter-spacing: -0.01em;
+      transition: border-color .2s, background .2s, transform .2s;
+    }
+    .btn-ghost:hover { border-color: var(--ink); background: rgba(38,13,59,.04); transform: translateY(-2px); }
+
+    .hero-stats {
+      display: flex; gap: 2.75rem; margin-top: 3.5rem;
+      padding-top: 2.5rem; border-top: 1px solid var(--border);
+    }
+    .stat-item { display: flex; flex-direction: column; gap: .2rem; }
+    .stat-num {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 2.1rem; font-weight: 800; color: var(--ink);
+      line-height: 1; letter-spacing: -0.04em;
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted-light); font-weight: 500; }
+
+    /* HERO VISUAL */
+    .hero-visual {
+      position: relative; z-index: 1; padding-top: 68px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem;
+      animation: visualIn .9s cubic-bezier(.22,1,.36,1) .15s both;
+    }
+    @keyframes visualIn {
+      from { opacity: 0; transform: translateY(40px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .mini-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 18px; padding: 1.5rem 1.4rem; box-shadow: var(--shadow);
+      transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s;
+      cursor: default;
+    }
+    .mini-card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(38,13,59,.11); }
+    .mini-card:nth-child(2), .mini-card:nth-child(4) { margin-top: 1.75rem; }
+    .mini-icon { font-size: 1.75rem; margin-bottom: .85rem; line-height: 1; }
+    .mini-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 700; font-size: .92rem; letter-spacing: -0.02em;
+      color: var(--ink); margin-bottom: .4rem; line-height: 1.3;
+    }
+    .mini-dur { font-size: .75rem; color: var(--muted-light); font-weight: 500; }
+
+    /* FORMATIONS SECTION */
+    .section-formations {
+      padding: 7rem 4rem; background: var(--ink);
+      color: var(--paper); position: relative; overflow: hidden;
+    }
+    .section-formations::before {
+      content: ''; position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='.8' fill='%23ffffff' fill-opacity='.025'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .section-header {
+      display: flex; justify-content: space-between;
+      align-items: flex-end; margin-bottom: 4rem; gap: 3rem; position: relative;
+    }
+
+    .section-eyebrow {
+      font-size: .7rem; font-weight: 700; letter-spacing: .15em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: .85rem;
+    }
+    .section-title {
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800;
+      font-size: clamp(2rem, 3.2vw, 2.9rem); letter-spacing: -0.04em;
+      line-height: 1.05; color: var(--paper);
+    }
+    .section-sub { font-size: .9rem; color: #a07ec0; max-width: 360px; line-height: 1.7; font-weight: 400; }
+
+    /* CARDS */
+    .formations-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem; position: relative;
+    }
+
+    .formation-card {
+      background: #1a0828; border: 1px solid #3a1a52;
+      border-radius: 22px; padding: 2rem; position: relative;
+      overflow: hidden; display: flex; flex-direction: column;
+      transition: transform .35s cubic-bezier(.22,1,.36,1), border-color .3s, box-shadow .35s;
+      animation: cardIn .55s cubic-bezier(.22,1,.36,1) both;
+    }
+    .formation-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+    }
+    .formation-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(138,43,226,.5);
+      box-shadow: 0 24px 64px rgba(138,43,226,.12), 0 0 0 1px rgba(138,43,226,.12);
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .formation-card:nth-child(1) { animation-delay: .04s; }
+    .formation-card:nth-child(2) { animation-delay: .09s; }
+    .formation-card:nth-child(3) { animation-delay: .14s; }
+    .formation-card:nth-child(4) { animation-delay: .19s; }
+    .formation-card:nth-child(5) { animation-delay: .24s; }
+    .formation-card:nth-child(6) { animation-delay: .29s; }
+
+    .card-top {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; margin-bottom: 1.5rem;
+    }
+    .card-icon {
+      width: 50px; height: 50px; background: #2d1045;
+      border-radius: 14px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.4rem;
+      border: 1px solid #4a2060; flex-shrink: 0;
+    }
+    .card-tag {
+      font-size: .67rem; font-weight: 700; letter-spacing: .09em;
+      text-transform: uppercase; padding: .28rem .75rem;
+      border-radius: 100px; border: 1px solid #4a2060;
+      color: #a07ec0; white-space: nowrap; align-self: flex-start;
+    }
+    .card-titre {
+      font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700;
+      font-size: 1.1rem; color: #f5f0fa; margin-bottom: .7rem;
+      line-height: 1.3; letter-spacing: -0.02em;
+    }
+    .card-desc {
+      font-size: .845rem; line-height: 1.7; color: #8a65a8;
+      margin-bottom: 1.75rem; flex: 1; font-weight: 400;
+    }
+    .card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 1.25rem; border-top: 1px solid #3a1a52; margin-top: auto;
+    }
+    .card-meta { display: flex; flex-direction: column; gap: .3rem; }
+    .card-duree { font-size: .76rem; color: #a07ec0; font-weight: 500; display: flex; align-items: center; gap: .3rem; }
+    .card-niveau {
+      font-size: .7rem; font-weight: 700; padding: .22rem .65rem;
+      border-radius: 6px; display: inline-block; letter-spacing: .02em; width: fit-content;
+    }
+    .niveau-D-butant        { background: rgba(34,197,94,.12);  color: #22c55e; }
+    .niveau-Interm-diaire   { background: rgba(251,191,36,.12); color: #fbbf24; }
+    .niveau-Avanc-          { background: rgba(138,43,226,.12);  color: var(--accent); }
+    .niveau-Débutant        { background: rgba(34,197,94,.12);  color: #22c55e; }
+    .niveau-Intermédiaire   { background: rgba(251,191,36,.12); color: #fbbf24; }
+    .niveau-Avancé          { background: rgba(138,43,226,.12);  color: var(--accent); }
+
+    .card-arrow {
+      width: 36px; height: 36px; background: #2d1045; border-radius: 50%;
+      border: 1px solid #4a2060; display: flex; align-items: center;
+      justify-content: center; color: #8a65a8; font-size: .9rem; flex-shrink: 0;
+      transition: background .25s, color .2s, border-color .2s, transform .25s;
+    }
+    .formation-card:hover .card-arrow { background: var(--accent); color: #fff; border-color: var(--accent); transform: rotate(-45deg); }
+
+    /* FOOTER */
+    footer {
+      background: var(--ink); border-top: 1px solid #2d1045;
+      padding: 1.75rem 4rem; display: flex;
+      justify-content: space-between; align-items: center;
+      color: #7a5a98; font-size: .8rem; font-weight: 500;
+    }
+    footer .logo { color: var(--paper); font-size: 1.1rem; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .hero { gap: 3rem; }
+      .formations-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 900px) {
+      nav { padding: 0 2rem; }
+      .hero { grid-template-columns: 1fr; padding: 0 2rem; gap: 2.5rem; min-height: auto; padding-bottom: 4rem; }
+      .hero-content { padding-top: calc(68px + 3rem); }
+      .hero-visual { display: none; }
+      .section-formations { padding: 5rem 2rem; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+      .section-sub { max-width: 100%; }
+      footer { padding: 1.5rem 2rem; }
+    }
+    @media (max-width: 640px) {
+      .formations-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      footer { flex-direction: column; gap: .875rem; text-align: center; }
+      .hero-stats { gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="/" class="logo">Formation<span>Hub</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Accueil</a></li>
+      <li><a href="#formations">Formations</a></li>
+      <li><a href="#">À propos</a></li>
+      <li><a href="#formations" class="nav-cta">Explorer →</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-label">✦ Plateforme de formations tech</span>
+      <h1 class="hero-title">
+        Développez<br>vos<br>
+        <em>compétences</em>
+        digitales
+      </h1>
+      <p class="hero-desc">
+        Des formations intensives et pratiques pour devenir un expert
+        en développement, DevOps, Cloud et intelligence artificielle.
+      </p>
+      <div class="hero-actions">
+        <a href="#formations" class="btn-primary">Voir les formations →</a>
+        <a href="#" class="btn-ghost">En savoir plus</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">6+</span>
+          <span class="stat-label">Formations</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">500+</span>
+          <span class="stat-label">Étudiants</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">98%</span>
+          <span class="stat-label">Satisfaction</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      {% for f in formations[:4] %}
+      <div class="mini-card">
+        <div class="mini-icon">{{ f.icon }}</div>
+        <div class="mini-title">{{ f.titre }}</div>
+        <div class="mini-dur">{{ f.duree }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- FORMATIONS -->
+  <section class="section-formations" id="formations">
+    <div class="section-header">
+      <div>
+        <div class="section-eyebrow">Catalogue complet</div>
+        <h2 class="section-title">Toutes nos<br>formations</h2>
+      </div>
+      <p class="section-sub">
+        Chaque formation est conçue pour vous rendre opérationnel rapidement,
+        avec une approche 100% pratique.
+      </p>
+    </div>
+
+    <div class="formations-grid">
+      {% for f in formations %}
+      <div class="formation-card">
+        <div class="card-top">
+          <div class="card-icon">{{ f.icon }}</div>
+          <span class="card-tag">{{ f.tag }}</span>
+        </div>
+        <h3 class="card-titre">{{ f.titre }}</h3>
+        <p class="card-desc">{{ f.description }}</p>
+        <div class="card-footer">
+          <div class="card-meta">
+            <span class="card-duree">⏱ {{ f.duree }}</span>
+            <span class="card-niveau niveau-{{ f.niveau }}">{{ f.niveau }}</span>
+          </div>
+          <div class="card-arrow">→</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="/" class="logo">Formation<span style="color:var(--accent)">Hub</span></a>
+    <span>© 2024 FormationHub — Mini-Projet DevOps</span>
+    <span>🐳 Powered by Docker & Flask</span>
+  </footer>
+
+</body>
+</html>

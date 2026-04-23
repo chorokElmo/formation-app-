@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  # ── Application Flask ──────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: formation-app
+    ports:
+      - "3000:3000"
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      - formation-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Base de données PostgreSQL (optionnel) ─────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: formation-db
+    environment:
+      POSTGRES_DB: formation_db
+      POSTGRES_USER: formation_user
+      POSTGRES_PASSWORD: formation_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - formation-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U formation_user -d formation_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ── Réseau partagé ────────────────────────────────────────────────
+networks:
+  formation-net:
+    driver: bridge
+
+# ── Volume persistant ─────────────────────────────────────────────
+volumes:
+  postgres_data:
